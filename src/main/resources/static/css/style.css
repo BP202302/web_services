@@ -1,0 +1,36 @@
+/* CombustiSV - Estilos Globales */
+:root {
+    --primary: #1A237E;
+    --primary-light: #3949AB;
+    --accent: #FF6F00;
+    --dark: #212121;
+    --light: #F5F5F5;
+    --success-green: #2E7D32;
+    --danger-red: #C62828;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    color: var(--dark);
+    background-color: #FAFAFA;
+}
+
+.bg-primary { background-color: var(--primary) !important; }
+.text-warning { color: var(--accent) !important; }
+.btn-warning { background-color: var(--accent); border-color: var(--accent); color: #fff; }
+.btn-warning:hover { background-color: #E65100; border-color: #E65100; color: #fff; }
+
+.hero-section { min-height: 350px; display: flex; align-items: center; }
+
+.card { border-radius: 8px; transition: transform 0.2s; }
+.card:hover { transform: translateY(-3px); }
+
+.table thead { background-color: var(--primary); }
+.table th { font-weight: 600; }
+
+.navbar-brand { font-size: 1.4rem; }
+
+footer { margin-top: auto; }
+footer h5, footer h6 { margin-bottom: 0.5rem; }
+
+.badge.bg-info { background-color: var(--primary-light) !important; }

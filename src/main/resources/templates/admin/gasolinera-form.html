@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head('Admin - Gasolinera')"></head>
+<body>
+<nav th:replace="fragments/header :: navbar"></nav>
+<div class="container my-5">
+    <h1 class="fw-bold mb-4" th:text="${gasolinera.id != null ? 'Editar Gasolinera' : 'Nueva Gasolinera'}"></h1>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form th:action="@{/admin/gasolineras/guardar}" th:object="${gasolinera}" method="post">
+                <input type="hidden" th:field="*{id}"/>
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" class="form-control" th:field="*{nombre}" required/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Marca</label>
+                    <select class="form-select" th:field="*{marca}">
+                        <option value="Puma">Puma</option><option value="Shell">Shell</option>
+                        <option value="Texaco">Texaco</option><option value="Uno">Uno</option>
+                        <option value="Alba">Alba Petroleos</option><option value="Otra">Otra</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Direccion</label>
+                    <input type="text" class="form-control" th:field="*{direccion}" required/>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Departamento</label>
+                        <input type="text" class="form-control" th:field="*{departamento}"/>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Municipio</label>
+                        <input type="text" class="form-control" th:field="*{municipio}"/>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Telefono</label>
+                        <input type="text" class="form-control" th:field="*{telefono}"/>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a th:href="@{/admin/gasolineras}" class="btn btn-outline-secondary ms-2">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

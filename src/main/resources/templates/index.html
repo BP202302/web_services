@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head('CombustiSV - Inicio')"></head>
+<body>
+<nav th:replace="fragments/header :: navbar"></nav>
+
+<section class="hero-section text-white text-center py-5" style="background: linear-gradient(135deg, #1A237E 0%, #3949AB 100%);">
+    <div class="container py-4">
+        <h1 class="display-4 fw-bold">Encuentra los mejores precios<br/>de combustible en El Salvador</h1>
+        <p class="lead mt-3">Compara precios de gasolina y diesel en las principales gasolineras del pais.</p>
+        <a th:href="@{/precios}" class="btn btn-warning btn-lg mt-3 px-4 fw-bold">Ver Precios Ahora</a>
+    </div>
+</section>
+
+<section class="container my-5">
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-4">
+            <div class="card text-center border-0 shadow h-100">
+                <div class="card-body">
+                    <div class="display-6 text-warning mb-2">&#9981;</div>
+                    <h5 class="card-title fw-bold">Regular</h5>
+                    <p class="text-muted">Gasolina 87 octanos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center border-0 shadow h-100">
+                <div class="card-body">
+                    <div class="display-6 text-primary mb-2">&#9981;</div>
+                    <h5 class="card-title fw-bold">Premium</h5>
+                    <p class="text-muted">Gasolina 95 octanos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center border-0 shadow h-100">
+                <div class="card-body">
+                    <div class="display-6 text-success mb-2">&#9981;</div>
+                    <h5 class="card-title fw-bold">Diesel</h5>
+                    <p class="text-muted">Diesel automotriz</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container my-5">
+    <h2 class="text-center fw-bold mb-4">Precios Actualizados</h2>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Gasolinera</th><th>Marca</th><th>Tipo</th>
+                    <th>Precio/Galon</th><th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="p : ${precios}">
+                    <td th:text="${p.gasolinera.nombre}"></td>
+                    <td th:text="${p.gasolinera.marca}"></td>
+                    <td><span class="badge bg-info" th:text="${p.tipoCombustible.nombre}"></span></td>
+                    <td class="fw-bold text-success" th:text="'$' + ${p.precioGalon}"></td>
+                    <td th:text="${p.fechaActualizacion}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

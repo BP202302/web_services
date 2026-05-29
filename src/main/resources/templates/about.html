@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head('CombustiSV - Acerca de')"></head>
+<body>
+<nav th:replace="fragments/header :: navbar"></nav>
+<div class="container my-5">
+    <h1 class="fw-bold mb-4">Acerca de CombustiSV</h1>
+    <div class="row">
+        <div class="col-md-8">
+            <h3>Mision</h3>
+            <p>Proporcionar a los consumidores salvadorenos una herramienta accesible y actualizada para comparar precios de combustibles, contribuyendo al ahorro y la transparencia del mercado.</p>
+            <h3>Vision</h3>
+            <p>Ser la plataforma de referencia en El Salvador para la consulta de precios de combustibles, promoviendo la competencia justa y el beneficio del consumidor.</p>
+            <h3>Equipo de Desarrollo</h3>
+            <ul>
+                <li><strong>Kevin Audias Martinez Perez</strong> - MP202301 - Frontend Developer</li>
+                <li><strong>Brandon Steven Barrera Portillo</strong> - BP202302 - Backend Developer</li>
+                <li><strong>Hugo Eriberto Zepeda Palacios</strong> - ZP202301 - Full Stack / QA</li>
+            </ul>
+            <p class="mt-4 text-muted">Proyecto desarrollado para la materia Diseno de la Plataforma Web.<br/>Universidad Politecnica de El Salvador &copy; 2026</p>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

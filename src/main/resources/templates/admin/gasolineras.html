@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head('Admin - Gasolineras')"></head>
+<body>
+<nav th:replace="fragments/header :: navbar"></nav>
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold">Gasolineras</h1>
+        <a th:href="@{/admin/gasolineras/nueva}" class="btn btn-success">+ Nueva Gasolinera</a>
+    </div>
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <table class="table table-hover table-striped">
+        <thead class="table-dark">
+            <tr><th>ID</th><th>Nombre</th><th>Marca</th><th>Direccion</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+            <tr th:each="g : ${gasolineras}">
+                <td th:text="${g.id}"></td>
+                <td th:text="${g.nombre}"></td>
+                <td th:text="${g.marca}"></td>
+                <td th:text="${g.direccion}"></td>
+                <td>
+                    <a th:href="@{/admin/gasolineras/editar/{id}(id=${g.id})}" class="btn btn-sm btn-warning">Editar</a>
+                    <a th:href="@{/admin/gasolineras/eliminar/{id}(id=${g.id})}" class="btn btn-sm btn-danger"
+                       onclick="return confirm('Eliminar esta gasolinera?')">Eliminar</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/admin}" class="btn btn-outline-secondary">Volver al Dashboard</a>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

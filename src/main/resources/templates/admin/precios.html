@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head('Admin - Precios')"></head>
+<body>
+<nav th:replace="fragments/header :: navbar"></nav>
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold">Precios</h1>
+        <a th:href="@{/admin/precios/nuevo}" class="btn btn-success">+ Nuevo Precio</a>
+    </div>
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <table class="table table-hover table-striped">
+        <thead class="table-dark">
+            <tr><th>ID</th><th>Gasolinera</th><th>Tipo</th><th>Precio</th><th>Fecha</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+            <tr th:each="p : ${precios}">
+                <td th:text="${p.id}"></td>
+                <td th:text="${p.gasolinera.nombre}"></td>
+                <td th:text="${p.tipoCombustible.nombre}"></td>
+                <td class="fw-bold" th:text="'$' + ${p.precioGalon}"></td>
+                <td th:text="${p.fechaActualizacion}"></td>
+                <td>
+                    <a th:href="@{/admin/precios/eliminar/{id}(id=${p.id})}" class="btn btn-sm btn-danger"
+                       onclick="return confirm('Eliminar este precio?')">Eliminar</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/admin}" class="btn btn-outline-secondary">Volver al Dashboard</a>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

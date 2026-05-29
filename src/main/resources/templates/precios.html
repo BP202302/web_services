@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head('CombustiSV - Precios')"></head>
+<body>
+<nav th:replace="fragments/header :: navbar"></nav>
+
+<div class="container my-5">
+    <h1 class="fw-bold mb-4">Precios de Combustibles</h1>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form th:action="@{/precios}" method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Tipo de Combustible</label>
+                    <select name="tipoId" class="form-select">
+                        <option value="">-- Todos --</option>
+                        <option th:each="t : ${tipos}" th:value="${t.id}" th:text="${t.nombre}"
+                                th:selected="${tipoSeleccionado != null and tipoSeleccionado == t.id}"></option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Gasolinera</label>
+                    <select name="gasolineraId" class="form-select">
+                        <option value="">-- Todas --</option>
+                        <option th:each="g : ${gasolineras}" th:value="${g.id}" th:text="${g.nombre}"
+                                th:selected="${gasolineraSeleccionada != null and gasolineraSeleccionada == g.id}"></option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle">
+            <thead class="table-dark">
+                <tr><th>#</th><th>Gasolinera</th><th>Marca</th><th>Tipo</th><th>Precio/Galon</th><th>Fecha</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="p, stat : ${precios}">
+                    <td th:text="${stat.index + 1}"></td>
+                    <td th:text="${p.gasolinera.nombre}"></td>
+                    <td th:text="${p.gasolinera.marca}"></td>
+                    <td><span class="badge bg-info" th:text="${p.tipoCombustible.nombre}"></span></td>
+                    <td class="fw-bold text-success" th:text="'$' + ${p.precioGalon}"></td>
+                    <td th:text="${p.fechaActualizacion}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p th:if="${#lists.isEmpty(precios)}" class="text-muted text-center">No se encontraron precios con los filtros seleccionados.</p>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
