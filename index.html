@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CombustiSV - Comparador de Precios de Combustibles</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1A237E;
+            --primary-light: #3949AB;
+            --accent: #FF6F00;
+            --accent-hover: #E65100;
+            --dark: #212121;
+            --light: #F5F5F5;
+            --success: #2E7D32;
+            --danger: #C62828;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--dark);
+            background: #FAFAFA;
+            margin: 0;
+        }
+
+        /* NAVBAR */
+        .navbar { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%) !important; }
+        .navbar-brand { font-size: 1.5rem; font-weight: 700; }
+        .navbar-brand .brand-accent { color: var(--accent); }
+        .navbar-brand .brand-white { color: #fff; }
+        .nav-link { color: #C5CAE9 !important; font-weight: 500; transition: color 0.2s; }
+        .nav-link:hover, .nav-link.active { color: #fff !important; }
+        .btn-admin { background: var(--accent); color: #fff !important; border: none; border-radius: 6px; padding: 6px 18px !important; font-weight: 600; }
+        .btn-admin:hover { background: var(--accent-hover); color: #fff !important; }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, #1A237E 100%);
+            padding: 80px 20px;
+            text-align: center;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -80px; right: -80px;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: rgba(255,111,0,0.1);
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -60px; left: -60px;
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+        }
+        .hero h1 { font-size: 2.4rem; font-weight: 700; position: relative; z-index: 1; }
+        .hero p { color: #C5CAE9; font-size: 1.1rem; max-width: 550px; margin: 15px auto 0; position: relative; z-index: 1; }
+        .btn-hero {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-top: 25px;
+            box-shadow: 0 4px 20px rgba(255,111,0,0.4);
+            transition: all 0.3s;
+            position: relative; z-index: 1;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-hero:hover { background: var(--accent-hover); transform: translateY(-2px); color: #fff; }
+
+        /* CARDS COMBUSTIBLE */
+        .fuel-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 2px solid transparent;
+        }
+        .fuel-card:hover { transform: translateY(-6px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+        .fuel-card.regular { border-color: rgba(255,111,0,0.2); }
+        .fuel-card.premium { border-color: rgba(26,35,126,0.2); }
+        .fuel-card.diesel { border-color: rgba(46,125,50,0.2); }
+        .fuel-icon { font-size: 2.8rem; margin-bottom: 10px; }
+        .fuel-card h5 { font-weight: 700; margin-bottom: 4px; }
+        .fuel-card p { color: #999; font-size: 0.9rem; margin: 0; }
+
+        /* TABLES */
+        .table thead { background: var(--primary); }
+        .table thead th { color: #fff; font-weight: 600; font-size: 0.85rem; border: none; padding: 12px 16px; white-space: nowrap; }
+        .table tbody td { padding: 10px 16px; vertical-align: middle; font-size: 0.9rem; }
+        .table-hover tbody tr:hover { background: #E8EAF6 !important; }
+        .price-value { font-weight: 700; color: var(--success); }
+        .price-low { color: var(--success); font-weight: 700; }
+        .badge-tipo { background: var(--primary-light); color: #fff; padding: 3px 12px; border-radius: 12px; font-size: 0.78rem; font-weight: 500; }
+
+        /* SECTION TITLES */
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        /* FILTERS */
+        .filter-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+        .filter-card label { font-weight: 600; font-size: 0.85rem; color: #555; }
+        .filter-card .form-select, .filter-card .form-control { border-radius: 8px; }
+
+        /* ADMIN CARDS */
+        .admin-stat {
+            border-radius: 14px;
+            padding: 30px 20px;
+            text-align: center;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .admin-stat h2 { font-size: 2.5rem; font-weight: 700; margin: 0; }
+        .admin-stat p { margin: 5px 0 15px; opacity: 0.9; }
+        .admin-stat .btn { background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.4); font-weight: 600; font-size: 0.85rem; }
+        .admin-stat .btn:hover { background: rgba(255,255,255,0.3); color: #fff; }
+
+        /* ABOUT */
+        .team-member {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+        }
+        .team-member:nth-child(odd) { background: var(--light); }
+        .team-avatar {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .team-name { font-weight: 600; font-size: 0.95rem; }
+        .team-role { font-size: 0.8rem; color: #999; }
+
+        /* FOOTER */
+        footer {
+            background: #1a1a2e;
+            color: #999;
+            padding: 30px 0 22px;
+            margin-top: 50px;
+        }
+        footer .brand-accent { color: var(--accent); font-weight: 700; }
+        footer .brand-white { color: #fff; font-weight: 700; }
+        footer h6 { color: #ccc; font-weight: 600; }
+
+        /* PAGE SECTIONS (hidden by default) */
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+
+        /* FORM */
+        .form-card {
+            background: #fff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.06);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.6rem; }
+            .hero { padding: 50px 16px; }
+            .section-title { font-size: 1.3rem; }
+        }
+
+        /* COMPARADOR LOW PRICE MARKER */
+        .lowest-mark {
+            color: var(--success);
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="#" onclick="showPage('home')">
+            <span class="brand-accent">Combusti</span><span class="brand-white">SV</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item"><a class="nav-link active" href="#" onclick="showPage('home')" id="nav-home">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('precios')" id="nav-precios">Precios</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('comparador')" id="nav-comparador">Comparador</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('about')" id="nav-about">Acerca de</a></li>
+                <li class="nav-item ms-2"><a class="nav-link btn-admin" href="#" onclick="showPage('admin')" id="nav-admin">Admin</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- ============ HOME ============ -->
+<div id="page-home" class="page-section active">
+    <section class="hero">
+        <h1>Encuentra los mejores precios<br>de combustible en El Salvador</h1>
+        <p>Compara precios de gasolina y diésel en las principales gasolineras del país.</p>
+        <a href="#" class="btn-hero" onclick="showPage('precios')">Ver Precios Ahora</a>
+    </section>
+
+    <section class="container my-5">
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="fuel-card regular">
+                    <div class="fuel-icon">⛽</div>
+                    <h5>Regular</h5>
+                    <p>Gasolina 87 octanos</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="fuel-card premium">
+                    <div class="fuel-icon">⛽</div>
+                    <h5>Premium</h5>
+                    <p>Gasolina 95 octanos</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="fuel-card diesel">
+                    <div class="fuel-icon">⛽</div>
+                    <h5>Diésel</h5>
+                    <p>Diésel automotriz</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container mb-5">
+        <h2 class="section-title">Precios Actualizados</h2>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle" id="tabla-home">
+                <thead>
+                    <tr><th>Gasolinera</th><th>Marca</th><th>Tipo</th><th>Precio/Galón</th><th>Fecha</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<!-- ============ PRECIOS ============ -->
+<div id="page-precios" class="page-section">
+    <div class="container my-5">
+        <h1 class="section-title">Precios de Combustibles</h1>
+
+        <div class="filter-card">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label">Tipo de Combustible</label>
+                    <select id="filtro-tipo" class="form-select" onchange="filtrarPrecios()">
+                        <option value="">-- Todos --</option>
+                        <option value="Regular">Regular</option>
+                        <option value="Premium">Premium</option>
+                        <option value="Diesel">Diesel</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Gasolinera</label>
+                    <select id="filtro-gas" class="form-select" onchange="filtrarPrecios()">
+                        <option value="">-- Todas --</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-primary w-100" onclick="limpiarFiltros()" style="background:var(--primary);border:none;border-radius:8px;padding:10px;">Limpiar Filtros</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle" id="tabla-precios">
+                <thead>
+                    <tr><th>#</th><th>Gasolinera</th><th>Marca</th><th>Tipo</th><th>Precio/Galón</th><th>Fecha</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <p id="no-results" class="text-muted text-center" style="display:none;">No se encontraron precios con los filtros seleccionados.</p>
+    </div>
+</div>
+
+<!-- ============ COMPARADOR ============ -->
+<div id="page-comparador" class="page-section">
+    <div class="container my-5">
+        <h1 class="section-title">Comparador de Precios</h1>
+        <p class="text-muted mb-4">Compara los precios de todas las gasolineras lado a lado. <span class="lowest-mark">✓</span> indica el precio más bajo.</p>
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle text-center" id="tabla-comparador">
+                <thead>
+                    <tr><th class="text-start">Gasolinera</th><th>Marca</th><th>Regular</th><th>Premium</th><th>Diésel</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ============ ADMIN ============ -->
+<div id="page-admin" class="page-section">
+    <div class="container my-5">
+        <h1 class="section-title">Panel de Administración</h1>
+
+        <!-- Dashboard -->
+        <div id="admin-dashboard">
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="admin-stat" style="background:var(--primary);">
+                        <h2>5</h2>
+                        <p>Gasolineras</p>
+                        <button class="btn btn-sm" onclick="showAdminView('gasolineras')">Gestionar</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="admin-stat" style="background:var(--accent);">
+                        <h2>15</h2>
+                        <p>Precios Vigentes</p>
+                        <button class="btn btn-sm" onclick="showAdminView('precios')">Gestionar</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="admin-stat" style="background:var(--success);">
+                        <h2>3</h2>
+                        <p>Tipos de Combustible</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gasolineras CRUD -->
+        <div id="admin-gasolineras" style="display:none;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 style="color:var(--primary);margin:0;">Gasolineras</h3>
+                <button class="btn btn-success btn-sm" onclick="toggleForm('form-gas')">+ Nueva Gasolinera</button>
+            </div>
+
+            <div id="form-gas" class="form-card mb-3" style="display:none;">
+                <h5 style="color:var(--primary);">Nueva Gasolinera</h5>
+                <div class="row g-3">
+                    <div class="col-md-4"><input class="form-control" placeholder="Nombre"></div>
+                    <div class="col-md-3">
+                        <select class="form-select"><option>Puma</option><option>Shell</option><option>Texaco</option><option>Uno</option><option>Alba</option></select>
+                    </div>
+                    <div class="col-md-5"><input class="form-control" placeholder="Dirección"></div>
+                </div>
+                <div class="row g-3 mt-1">
+                    <div class="col-md-4"><input class="form-control" placeholder="Departamento"></div>
+                    <div class="col-md-4"><input class="form-control" placeholder="Municipio"></div>
+                    <div class="col-md-4"><input class="form-control" placeholder="Teléfono"></div>
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-sm" style="background:var(--primary);color:#fff;">Guardar</button>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" onclick="toggleForm('form-gas')">Cancelar</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle" id="tabla-admin-gas">
+                    <thead><tr><th>ID</th><th>Nombre</th><th>Marca</th><th>Dirección</th><th>Depto.</th><th>Acciones</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <button class="btn btn-outline-secondary btn-sm mt-2" onclick="showAdminView('dashboard')">← Volver al Dashboard</button>
+        </div>
+
+        <!-- Precios CRUD -->
+        <div id="admin-precios" style="display:none;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 style="color:var(--primary);margin:0;">Precios</h3>
+                <button class="btn btn-success btn-sm" onclick="toggleForm('form-precio')">+ Nuevo Precio</button>
+            </div>
+
+            <div id="form-precio" class="form-card mb-3" style="display:none;">
+                <h5 style="color:var(--primary);">Registrar Nuevo Precio</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label" style="font-size:0.85rem;">Gasolinera</label>
+                        <select class="form-select" id="form-precio-gas"></select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" style="font-size:0.85rem;">Tipo Combustible</label>
+                        <select class="form-select"><option>Regular</option><option>Premium</option><option>Diesel</option></select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" style="font-size:0.85rem;">Precio/Galón (USD)</label>
+                        <input type="number" class="form-control" step="0.01" min="0.01" placeholder="$0.00">
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-sm" style="background:var(--primary);color:#fff;">Guardar Precio</button>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" onclick="toggleForm('form-precio')">Cancelar</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle" id="tabla-admin-precios">
+                    <thead><tr><th>ID</th><th>Gasolinera</th><th>Tipo</th><th>Precio</th><th>Fecha</th><th>Acciones</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <button class="btn btn-outline-secondary btn-sm mt-2" onclick="showAdminView('dashboard')">← Volver al Dashboard</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============ ABOUT ============ -->
+<div id="page-about" class="page-section">
+    <div class="container my-5">
+        <h1 class="section-title">Acerca de CombustiSV</h1>
+        <div class="row">
+            <div class="col-lg-8">
+                <h3 style="color:var(--primary);">Misión</h3>
+                <p>Proporcionar a los consumidores salvadoreños una herramienta accesible y actualizada para comparar precios de combustibles, contribuyendo al ahorro y la transparencia del mercado.</p>
+
+                <h3 style="color:var(--primary);margin-top:24px;">Visión</h3>
+                <p>Ser la plataforma de referencia en El Salvador para la consulta de precios de combustibles, promoviendo la competencia justa y el beneficio del consumidor.</p>
+
+                <h3 style="color:var(--primary);margin-top:24px;">Equipo de Desarrollo</h3>
+                <div class="team-member">
+                    <div class="team-avatar">K</div>
+                    <div>
+                        <div class="team-name">Kevin Audías Martínez Pérez</div>
+                        <div class="team-role">MP202301 — Frontend Developer</div>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="team-avatar">B</div>
+                    <div>
+                        <div class="team-name">Brandon Steven Barrera Portillo</div>
+                        <div class="team-role">BP202302 — Backend Developer & Documentación</div>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="team-avatar">H</div>
+                    <div>
+                        <div class="team-name">Hugo Eriberto Zepeda Palacios</div>
+                        <div class="team-role">ZP202301 — Full Stack / QA</div>
+                    </div>
+                </div>
+
+                <p class="text-muted mt-4" style="font-size:0.9rem;">
+                    Proyecto desarrollado para la materia Diseño de la Plataforma Web.<br>
+                    Universidad Politécnica de El Salvador © 2026
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div style="font-size:1.3rem;"><span class="brand-accent">Combusti</span><span class="brand-white">SV</span></div>
+                <p class="mt-2" style="font-size:0.9rem;">Comparador de precios de combustibles de El Salvador.</p>
+            </div>
+            <div class="col-md-4 mb-3">
+                <h6>Equipo de Desarrollo</h6>
+                <p style="font-size:0.85rem;">Kevin Martínez &bull; Brandon Barrera &bull; Hugo Zepeda</p>
+            </div>
+            <div class="col-md-4 text-md-end mb-3">
+                <p style="font-size:0.85rem;">Universidad Politécnica de El Salvador<br>Diseño de la Plataforma Web © 2026</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============ DATA (simula la base de datos MySQL) ============
+const gasolineras = [
+    { id: 1, nombre: "Puma San Salvador Centro", marca: "Puma", direccion: "Blvd. Los Héroes, San Salvador", depto: "San Salvador", municipio: "San Salvador" },
+    { id: 2, nombre: "Shell Escalón", marca: "Shell", direccion: "Blvd. Escalón #3500, San Salvador", depto: "San Salvador", municipio: "San Salvador" },
+    { id: 3, nombre: "Texaco Santa Tecla", marca: "Texaco", direccion: "Carretera Panamericana, Santa Tecla", depto: "La Libertad", municipio: "Santa Tecla" },
+    { id: 4, nombre: "Uno Soyapango", marca: "Uno", direccion: "Blvd. del Ejército, Soyapango", depto: "San Salvador", municipio: "Soyapango" },
+    { id: 5, nombre: "Alba Petr. Mejicanos", marca: "Alba", direccion: "Calle Principal, Mejicanos", depto: "San Salvador", municipio: "Mejicanos" }
+];
+
+const precios = [
+    { id:1,  gasId:1, gas:"Puma San Salvador Centro", marca:"Puma",   tipo:"Regular", precio:4.25, fecha:"2026-05-29" },
+    { id:2,  gasId:1, gas:"Puma San Salvador Centro", marca:"Puma",   tipo:"Premium", precio:4.55, fecha:"2026-05-29" },
+    { id:3,  gasId:1, gas:"Puma San Salvador Centro", marca:"Puma",   tipo:"Diesel",  precio:3.98, fecha:"2026-05-29" },
+    { id:4,  gasId:2, gas:"Shell Escalón",            marca:"Shell",  tipo:"Regular", precio:4.30, fecha:"2026-05-29" },
+    { id:5,  gasId:2, gas:"Shell Escalón",            marca:"Shell",  tipo:"Premium", precio:4.60, fecha:"2026-05-29" },
+    { id:6,  gasId:2, gas:"Shell Escalón",            marca:"Shell",  tipo:"Diesel",  precio:4.05, fecha:"2026-05-29" },
+    { id:7,  gasId:3, gas:"Texaco Santa Tecla",       marca:"Texaco", tipo:"Regular", precio:4.28, fecha:"2026-05-29" },
+    { id:8,  gasId:3, gas:"Texaco Santa Tecla",       marca:"Texaco", tipo:"Premium", precio:4.58, fecha:"2026-05-29" },
+    { id:9,  gasId:3, gas:"Texaco Santa Tecla",       marca:"Texaco", tipo:"Diesel",  precio:4.00, fecha:"2026-05-29" },
+    { id:10, gasId:4, gas:"Uno Soyapango",            marca:"Uno",    tipo:"Regular", precio:4.22, fecha:"2026-05-29" },
+    { id:11, gasId:4, gas:"Uno Soyapango",            marca:"Uno",    tipo:"Premium", precio:4.50, fecha:"2026-05-29" },
+    { id:12, gasId:4, gas:"Uno Soyapango",            marca:"Uno",    tipo:"Diesel",  precio:3.95, fecha:"2026-05-29" },
+    { id:13, gasId:5, gas:"Alba Petr. Mejicanos",     marca:"Alba",   tipo:"Regular", precio:4.18, fecha:"2026-05-29" },
+    { id:14, gasId:5, gas:"Alba Petr. Mejicanos",     marca:"Alba",   tipo:"Premium", precio:4.48, fecha:"2026-05-29" },
+    { id:15, gasId:5, gas:"Alba Petr. Mejicanos",     marca:"Alba",   tipo:"Diesel",  precio:3.90, fecha:"2026-05-29" }
+];
+
+// ============ NAVIGATION ============
+function showPage(page) {
+    document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+    const navEl = document.getElementById('nav-' + page);
+    if (navEl) navEl.classList.add('active');
+    window.scrollTo(0, 0);
+
+    // Collapse mobile nav
+    const navCollapse = document.getElementById('navMenu');
+    if (navCollapse.classList.contains('show')) {
+        new bootstrap.Collapse(navCollapse).hide();
+    }
+}
+
+// ============ RENDER TABLES ============
+function renderHomeTable() {
+    const tbody = document.querySelector('#tabla-home tbody');
+    tbody.innerHTML = precios.map(p => `
+        <tr>
+            <td>${p.gas}</td>
+            <td>${p.marca}</td>
+            <td><span class="badge-tipo">${p.tipo}</span></td>
+            <td class="price-value">$${p.precio.toFixed(2)}</td>
+            <td>${p.fecha}</td>
+        </tr>
+    `).join('');
+}
+
+function renderPreciosTable(data) {
+    const tbody = document.querySelector('#tabla-precios tbody');
+    const sorted = [...data].sort((a, b) => a.precio - b.precio);
+    tbody.innerHTML = sorted.map((p, i) => `
+        <tr>
+            <td>${i + 1}</td>
+            <td>${p.gas}</td>
+            <td>${p.marca}</td>
+            <td><span class="badge-tipo">${p.tipo}</span></td>
+            <td class="price-value">$${p.precio.toFixed(2)}</td>
+            <td>${p.fecha}</td>
+        </tr>
+    `).join('');
+    document.getElementById('no-results').style.display = sorted.length === 0 ? 'block' : 'none';
+}
+
+function renderComparadorTable() {
+    const tbody = document.querySelector('#tabla-comparador tbody');
+    const minR = Math.min(...precios.filter(p => p.tipo === 'Regular').map(p => p.precio));
+    const minP = Math.min(...precios.filter(p => p.tipo === 'Premium').map(p => p.precio));
+    const minD = Math.min(...precios.filter(p => p.tipo === 'Diesel').map(p => p.precio));
+
+    tbody.innerHTML = gasolineras.map(g => {
+        const getP = (tipo) => precios.find(p => p.gasId === g.id && p.tipo === tipo);
+        const r = getP('Regular'), p = getP('Premium'), d = getP('Diesel');
+        return `<tr>
+            <td class="text-start fw-bold">${g.nombre}</td>
+            <td>${g.marca}</td>
+            <td class="${r && r.precio === minR ? 'price-low' : ''}">$${r ? r.precio.toFixed(2) : '—'} ${r && r.precio === minR ? '<span class="lowest-mark">✓</span>' : ''}</td>
+            <td class="${p && p.precio === minP ? 'price-low' : ''}">$${p ? p.precio.toFixed(2) : '—'} ${p && p.precio === minP ? '<span class="lowest-mark">✓</span>' : ''}</td>
+            <td class="${d && d.precio === minD ? 'price-low' : ''}">$${d ? d.precio.toFixed(2) : '—'} ${d && d.precio === minD ? '<span class="lowest-mark">✓</span>' : ''}</td>
+        </tr>`;
+    }).join('');
+}
+
+function renderAdminGas() {
+    const tbody = document.querySelector('#tabla-admin-gas tbody');
+    tbody.innerHTML = gasolineras.map(g => `
+        <tr>
+            <td>${g.id}</td>
+            <td>${g.nombre}</td>
+            <td>${g.marca}</td>
+            <td>${g.direccion}</td>
+            <td>${g.depto}</td>
+            <td>
+                <button class="btn btn-sm" style="background:var(--accent);color:#fff;font-size:0.78rem;">Editar</button>
+                <button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.78rem;">Eliminar</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function renderAdminPrecios() {
+    const tbody = document.querySelector('#tabla-admin-precios tbody');
+    tbody.innerHTML = precios.map(p => `
+        <tr>
+            <td>${p.id}</td>
+            <td>${p.gas}</td>
+            <td><span class="badge-tipo">${p.tipo}</span></td>
+            <td class="fw-bold">$${p.precio.toFixed(2)}</td>
+            <td>${p.fecha}</td>
+            <td><button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.78rem;">Eliminar</button></td>
+        </tr>
+    `).join('');
+
+    // Populate form select
+    const sel = document.getElementById('form-precio-gas');
+    sel.innerHTML = '<option value="">-- Seleccione --</option>' + gasolineras.map(g => `<option value="${g.id}">${g.nombre}</option>`).join('');
+}
+
+// ============ FILTERS ============
+function filtrarPrecios() {
+    const tipo = document.getElementById('filtro-tipo').value;
+    const gasName = document.getElementById('filtro-gas').value;
+    let filtered = precios;
+    if (tipo) filtered = filtered.filter(p => p.tipo === tipo);
+    if (gasName) filtered = filtered.filter(p => p.gas === gasName);
+    renderPreciosTable(filtered);
+}
+
+function limpiarFiltros() {
+    document.getElementById('filtro-tipo').value = '';
+    document.getElementById('filtro-gas').value = '';
+    renderPreciosTable(precios);
+}
+
+// ============ ADMIN VIEWS ============
+function showAdminView(view) {
+    document.getElementById('admin-dashboard').style.display = view === 'dashboard' ? 'block' : 'none';
+    document.getElementById('admin-gasolineras').style.display = view === 'gasolineras' ? 'block' : 'none';
+    document.getElementById('admin-precios').style.display = view === 'precios' ? 'block' : 'none';
+    if (view === 'gasolineras') renderAdminGas();
+    if (view === 'precios') renderAdminPrecios();
+}
+
+function toggleForm(id) {
+    const el = document.getElementById(id);
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+// ============ INIT ============
+document.addEventListener('DOMContentLoaded', function() {
+    // Populate gasolinera filter
+    const sel = document.getElementById('filtro-gas');
+    gasolineras.forEach(g => {
+        sel.innerHTML += `<option value="${g.nombre}">${g.nombre}</option>`;
+    });
+
+    renderHomeTable();
+    renderPreciosTable(precios);
+    renderComparadorTable();
+});
+</script>
+
+</body>
+</html>
